@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Démo Interactive - LG Pharma</title>
+    <style>
+        /* Style élégant pour la démo interactive */
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .demo-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .demo-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-tab {
+            padding: 12px 30px;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .demo-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .demo-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .demo-screen {
+            display: none;
+        }
+        
+        .demo-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+        }
+        
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-box.success {
+            background: #d1fae5;
+            border-left-color: var(--success);
+        }
+        
+        .result-box.warning {
+            background: #fef3c7;
+            border-left-color: var(--warning);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>Démo Interactive LG Pharma</h1>
+        <p>Testez les principales fonctionnalités du système</p>
+    </div>
+    
+    <div class="demo-tabs">
+        <button class="demo-tab active" onclick="showTab('stock')">📦 Gestion Stock</button>
+        <button class="demo-tab" onclick="showTab('vente')">💰 Vente Rapide</button>
+        <button class="demo-tab" onclick="showTab('stats')">📊 Statistiques</button>
+        <button class="demo-tab" onclick="showTab('alertes')">🔔 Alertes</button>
+    </div>
+    
+    <div class="demo-content">
+        <!-- TAB 1: Gestion Stock -->
+        <div id="tab-stock" class="demo-screen active">
+            <h2>Gestion des Médicaments</h2>
+            <p>Ajoutez un médicament au stock pour voir le système en action.</p>
+            
+            <div class="input-group">
+                <label>Nom du médicament</label>
+                <input type="text" id="medName" placeholder="ex: Doliprane 500mg" value="Paracétamol 500mg">
+            </div>
+            
+            <div class="input-group">
+                <label>Prix de vente (FCFA)</label>
+                <input type="number" id="medPrice" value="500">
+            </div>
+            
+            <div class="input-group">
+                <label>Quantité en stock</label>
+                <input type="number" id="medStock" value="50">
+            </div>
+            
+            <div class="input-group">
+                <label>Seuil d'alerte</label>
+                <input type="number" id="medSeuil" value="10">
+            </div>
+            
+            <button class="btn" onclick="ajouterMedicament()">
+                <i class="fas fa-plus-circle"></i> Ajouter au stock
+            </button>
+            
+            <div id="stockResult" class="result-box"></div>
+        </div>
+        
+        <!-- TAB 2: Vente Rapide -->
+        <div id="tab-vente" class="demo-screen">
+            <h2>Vente Rapide</h2>
+            <p>Simulez une vente avec calcul automatique.</p>
+            
+            <div class="input-group">
+                <label>Sélectionner un médicament</label>
+                <select id="venteMedicament">
+                    <option value="500">Paracétamol 500mg - 500 FCFA</option>
+                    <option value="1200">Amoxicilline 1g - 1 200 FCFA</option>
+                    <option value="800">Vitamine C - 800 FCFA</option>
+                    <option value="1500">Ibuprofène 400mg - 1 500 FCFA</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Quantité</label>
+                <input type="number" id="venteQty" value="2" min="1">
+            </div>
+            
+            <div class="input-group">
+                <label>Nom du client (optionnel)</label>
+                <input type="text" id="venteClient" placeholder="Nom du client">
+            </div>
+            
+            <button class="btn" onclick="faireVente()">
+                <i class="fas fa-cash-register"></i> Enregistrer la vente
+            </button>
+            
+            <div id="venteResult" class="result-box"></div>
+        </div>
+        
+        <!-- TAB 3: Statistiques -->
+        <div id="tab-stats" class="demo-screen">
+            <h2>Statistiques en Temps Réel</h2>
+            <p>Tableau de bord avec indicateurs clés.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="statMeds">0</div>
+                    <div class="stat-label">Médicaments en stock</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="statVentes">0</div>
+                    <div class="stat-label">Ventes aujourd'hui</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="statCA">0 FCFA</div>
+                    <div class="stat-label">Chiffre d'affaires</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="statAlertes">0</div>
+                    <div class="stat-label">Alertes actives</div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="actualiserStats()" style="margin-top: 30px;">
+                <i class="fas fa-sync-alt"></i> Actualiser les statistiques
+            </button>
+        </div>
+        
+        <!-- TAB 4: Alertes -->
+        <div id="tab-alertes" class="demo-screen">
+            <h2>Système d'Alertes Intelligentes</h2>
+            <p>Alertes automatiques pour une gestion proactive.</p>
+            
+            <div id="alertesContainer">
+                <!-- Les alertes seront générées ici -->
+            </div>
+            
+            <button class="btn" onclick="genererAlertes()">
+                <i class="fas fa-bell"></i> Générer des alertes de test
+            </button>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="index.html" style="color: var(--primary); text-decoration: none; margin-right: 20px;">
+            ← Retour au site
+        </a>
+       
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Données de démo
+        let medicaments = [];
+        let ventes = [];
+        let stats = {
+            totalMeds: 0,
+            totalVentes: 0,
+            totalCA: 0,
+            totalAlertes: 0
+        };
+        
+        // Gestion des onglets
+        function showTab(tabName) {
+            // Désactiver tous les onglets
+            document.querySelectorAll('.demo-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.demo-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Activer l'onglet sélectionné
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+        
+        // Fonction pour ajouter un médicament
+        function ajouterMedicament() {
+            const nom = document.getElementById('medName').value;
+            const prix = parseInt(document.getElementById('medPrice').value);
+            const stock = parseInt(document.getElementById('medStock').value);
+            const seuil = parseInt(document.getElementById('medSeuil').value);
+            
+            const medicament = {
+                id: Date.now(),
+                nom: nom,
+                prix: prix,
+                stock: stock,
+                seuil: seuil,
+                date: new Date().toLocaleDateString('fr-FR')
+            };
+            
+            medicaments.push(medicament);
+            stats.totalMeds++;
+            
+            let message = `
+                <h3><i class="fas fa-check-circle" style="color: #10b981;"></i> Médicament ajouté !</h3>
+                <p><strong>${nom}</strong> a été ajouté au stock.</p>
+                <p>📊 Détails :</p>
+                <ul>
+                    <li>Prix : ${prix.toLocaleString()} FCFA</li>
+                    <li>Stock initial : ${stock} unités</li>
+                    <li>Seuil d'alerte : ${seuil} unités</li>
+                </ul>
+            `;
+            
+            if (stock <= seuil) {
+                message += `
+                    <div class="alert warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Alerte :</strong> Le stock est déjà bas !
+                    </div>
+                `;
+                stats.totalAlertes++;
+            }
+            
+            document.getElementById('stockResult').innerHTML = message;
+            document.getElementById('stockResult').className = 'result-box success';
+            
+            // Actualiser les stats
+            actualiserStats();
+        }
+        
+        // Fonction pour faire une vente
+        function faireVente() {
+            const select = document.getElementById('venteMedicament');
+            const prix = parseInt(select.value);
+            const nomMed = select.options[select.selectedIndex].text.split(' - ')[0];
+            const qty = parseInt(document.getElementById('venteQty').value);
+            const client = document.getElementById('venteClient').value || 'Client anonyme';
+            const total = prix * qty;
+            
+            const vente = {
+                id: Date.now(),
+                medicament: nomMed,
+                quantite: qty,
+                prixUnitaire: prix,
+                total: total,
+                client: client,
+                date: new Date().toLocaleTimeString('fr-FR')
+            };
+            
+            ventes.push(vente);
+            stats.totalVentes++;
+            stats.totalCA += total;
+            
+            // Réduire le stock d'un médicament fictif
+            if (medicaments.length > 0) {
+                medicaments[0].stock -= qty;
+                if (medicaments[0].stock <= medicaments[0].seuil) {
+                    stats.totalAlertes++;
+                }
+            }
+            
+            const message = `
+                <h3><i class="fas fa-check-circle" style="color: #10b981;"></i> Vente enregistrée !</h3>
+                <p>Facture générée pour <strong>${client}</strong></p>
+                <p>📋 Détails :</p>
+                <ul>
+                    <li>Médicament : ${nomMed}</li>
+                    <li>Quantité : ${qty} unité(s)</li>
+                    <li>Prix unitaire : ${prix.toLocaleString()} FCFA</li>
+                    <li>Total : <strong>${total.toLocaleString()} FCFA</strong></li>
+                </ul>
+                <p><em>🎯 Dans la version complète, une facture imprimable est générée automatiquement.</em></p>
+            `;
+            
+            document.getElementById('venteResult').innerHTML = message;
+            document.getElementById('venteResult').className = 'result-box success';
+            
+            // Actualiser les stats
+            actualiserStats();
+        }
+        
+        // Fonction pour actualiser les statistiques
+        function actualiserStats() {
+            document.getElementById('statMeds').textContent = stats.totalMeds;
+            document.getElementById('statVentes').textContent = stats.totalVentes;
+            document.getElementById('statCA').textContent = stats.totalCA.toLocaleString() + ' FCFA';
+            document.getElementById('statAlertes').textContent = stats.totalAlertes;
+        }
+        
+        // Fonction pour générer des alertes
+        function genererAlertes() {
+            const alertesContainer = document.getElementById('alertesContainer');
+            
+            const alertes = [
+                {
+                    type: 'warning',
+                    icon: 'fa-exclamation-triangle',
+                    message: 'Paracétamol 500mg - Stock bas (5 unités restantes)',
+                    medicament: 'Paracétamol 500mg',
+                    date: 'Il y a 2 heures'
+                },
+                {
+                    type: 'danger',
+                    icon: 'fa-skull-crossbones',
+                    message: 'Amoxicilline 1g - Péremption dans 15 jours',
+                    medicament: 'Amoxicilline 1g',
+                    date: 'Aujourd\'hui'
+                },
+                {
+                    type: 'success',
+                    icon: 'fa-chart-line',
+                    message: 'Vitamine C - Meilleure vente de la semaine (45 unités)',
+                    medicament: 'Vitamine C',
+                    date: 'Cette semaine'
+                },
+                {
+                    type: 'warning',
+                    icon: 'fa-box',
+                    message: 'Ibuprofène 400mg - Stock à réapprovisionner',
+                    medicament: 'Ibuprofène 400mg',
+                    date: 'Il y a 3 jours'
+                }
+            ];
+            
+            let html = '';
+            alertes.forEach(alerte => {
+                html += `
+                    <div class="alert ${alerte.type}">
+                        <i class="fas ${alerte.icon}"></i>
+                        <div style="flex: 1;">
+                            <strong>${alerte.medicament}</strong>
+                            <div>${alerte.message}</div>
+                            <small>${alerte.date}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            alertesContainer.innerHTML = html;
+            stats.totalAlertes = alertes.length;
+            actualiserStats();
+        }
+        
+        // Initialiser avec quelques données
+        window.onload = function() {
+            // Ajouter quelques médicaments de base
+            medicaments = [
+                { nom: 'Doliprane 500mg', prix: 500, stock: 25, seuil: 10 },
+                { nom: 'Amoxicilline 1g', prix: 1200, stock: 8, seuil: 5 }
+            ];
+            stats.totalMeds = 2;
+            stats.totalAlertes = 1; // Car amoxicilline en stock bas
+            
+            // Ajouter quelques ventes
+            ventes = [
+                { medicament: 'Doliprane 500mg', quantite: 2, total: 1000 },
+                { medicament: 'Vitamine C', quantite: 1, total: 800 }
+            ];
+            stats.totalVentes = 2;
+            stats.totalCA = 1800;
+            
+            actualiserStats();
+            genererAlertes();
+        };
+    </script>
+</body>
+</html>
